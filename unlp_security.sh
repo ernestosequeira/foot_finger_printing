@@ -9,7 +9,7 @@ GREEN="$(tput setaf 2)"
 YELLOW="\n$(tput setaf 3)"
 BLUE="\n$(tput setaf 4)"
 
-message() {
+message_date() {
 	# $1 : Message
 	# $2 : Color
 	# return : Message colorized
@@ -17,15 +17,15 @@ message() {
 	echo -e "${2}${NOW}${1}${NONE}"
 }
 
-message_no_date() {
+message() {
 	# $1 : Message
 	# $2 : Color
 	# return : Message colorized
 	echo -e "${2}${1}${NONE}"
 }
 
-install_packages () {
-	aptitude install nmap
+install_packages() {
+	sudo aptitude install nmap -y > /dev/null
 }
 
 main_menu() {
@@ -33,14 +33,15 @@ main_menu() {
 	while [ "$option" != 3 ]
 	do
 		echo " Main Menu: "
-		echo "[1]. Fingerprinting"
-		echo "[2]. Footprinting"
+		echo " -----------"
+		echo "[1]. Footprinting (non-intrusive)"
+		echo "[2]. Fingerprinting(intrusive)"
 		echo "[3]. Other"
 		echo "[4]. Exit"
 		read -p "Select an option [1-4]: " option
 	case $option in
-		1) fingerprinting;;
-		2) footprinting;;
+		1) footprinting;;
+		2) fingerprinting;;
 		3) other;;
 		4) exit 0;;
 		*) echo "$option is an invalid option.";
@@ -54,22 +55,22 @@ footprinting(){
 	read web
 	message ">> Start scanning web site." ${GREEN}
 	echo $(host $web) > scan_3.out
-    	message_no_date "$(awk '{ print "IP:";print $4 }' FS=" " scan_3.out)" ${RED}
+    	message "$(awk '{ print "IP:";print $4 }' FS=" " scan_3.out)" ${RED}
 
     	echo "------------------------------------------"
-    	message_no_date "Registro/s MX:" ${RED}
-	message_no_date "$(dig -t mx $web | grep IN)" ${RED}
+    	message "Register/s MX:" ${RED}
+	message "$(dig -t mx $web | grep IN)" ${RED}
 
 	echo "------------------------------------------"
-    	message_no_date "Servidor/es DNS:" ${RED}
-	message_no_date "$(dig -t ns $web | grep IN)" ${RED}
+    	message "Server/s DNS:" ${RED}
+	message "$(dig -t ns $web | grep IN)" ${RED}
 
 	echo "------------------------------------------"
 	ip=$(awk '{ print $4 }' FS=" " scan_3.out)
-	message_no_date "Versión de Servidor DNS BIND:" ${RED}
-	message_no_date "$(dig @$ip version.bind chaos txt | grep DiG)" ${RED}
+	message "Server version DNS BIND:" ${RED}
+	message "$(dig @$ip version.bind chaos txt | grep DiG)" ${RED}
 
-	message ">> Scanning complete." ${GREEN}
+	message_date ">> Scanning complete." ${GREEN}
 	echo "Press any key to finish..."
 	read p
 	clear
@@ -78,18 +79,18 @@ footprinting(){
 fingerprinting(){
 	echo "Input the network range to discover: (example: 192.168.1.0/24)"
 	read net
-	message ">> Start scanning network." ${GREEN}
+	message_date ">> Start scanning network." ${GREEN}
 	sudo nmap -sP $net -oN scan_1.out >/dev/null
-	message_no_date "$(grep report scan_1.out)" ${RED}
-	message ">> Scanning complete." ${GREEN}
+	message "$(grep report scan_1.out)" ${RED}
+	message_date ">> Scanning complete." ${GREEN}
 
 	echo "Input the IP number to discover: (example: 192.168.1.33)"
 	read ip
-	message ">> Start scanning ports and SO" ${GREEN}
+	message_date ">> Start scanning ports and SO" ${GREEN}
 	sudo nmap -O $ip -oN scan_2.out >/dev/null
-	message_no_date "$(grep windows scan_2.out || grep linux scan_2.out || grep Mac scan_2.out 2>/dev/null)" ${RED}
-	message_no_date "$(grep open scan_2.out 2>/dev/null)" ${RED}
-	message ">> Scanning complete." ${GREEN}
+	message "$(grep windows scan_2.out || grep linux scan_2.out || grep Mac scan_2.out 2>/dev/null)" ${RED}
+	message "$(grep open scan_2.out 2>/dev/null)" ${RED}
+	message_date ">> Scanning complete." ${GREEN}
 
 	echo "Press any key to finish..."
 	read p
