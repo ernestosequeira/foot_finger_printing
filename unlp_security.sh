@@ -54,21 +54,21 @@ footprinting(){
 	read web
 	message ">> Start scanning web site." ${GREEN}
 	echo $(host $web) > scan_3.out
-    message_no_date "$(awk '{ print "IP:";print $4 }' FS=" " scan_3.out)" ${RED}
-    
-    echo "------------------------------------------"
-    message_no_date "Registro/s MX:" ${RED}
+    	message_no_date "$(awk '{ print "IP:";print $4 }' FS=" " scan_3.out)" ${RED}
+
+    	echo "------------------------------------------"
+    	message_no_date "Registro/s MX:" ${RED}
 	message_no_date "$(dig -t mx $web | grep IN)" ${RED}
-	
+
 	echo "------------------------------------------"
-    message_no_date "Servidor/es DNS:" ${RED}
+    	message_no_date "Servidor/es DNS:" ${RED}
 	message_no_date "$(dig -t ns $web | grep IN)" ${RED}
-	
+
 	echo "------------------------------------------"
 	ip=$(awk '{ print $4 }' FS=" " scan_3.out)
 	message_no_date "Versión de Servidor DNS BIND:" ${RED}
 	message_no_date "$(dig @$ip version.bind chaos txt | grep DiG)" ${RED}
-	
+
 	message ">> Scanning complete." ${GREEN}
 	echo "Press any key to finish..."
 	read p
@@ -80,9 +80,9 @@ fingerprinting(){
 	read net
 	message ">> Start scanning network." ${GREEN}
 	sudo nmap -sP $net -oN scan_1.out >/dev/null
-    message_no_date "$(grep report scan_1.out)" ${RED}
+	message_no_date "$(grep report scan_1.out)" ${RED}
 	message ">> Scanning complete." ${GREEN}
-	
+
 	echo "Input the IP number to discover: (example: 192.168.1.33)"
 	read ip
 	message ">> Start scanning ports and SO" ${GREEN}
@@ -90,12 +90,12 @@ fingerprinting(){
 	message_no_date "$(grep windows scan_2.out || grep linux scan_2.out || grep Mac scan_2.out 2>/dev/null)" ${RED}
 	message_no_date "$(grep open scan_2.out 2>/dev/null)" ${RED}
 	message ">> Scanning complete." ${GREEN}
-	
+
 	echo "Press any key to finish..."
 	read p
 	clear
 }
 
-install_packages 
+install_packages
 main_menu
 
