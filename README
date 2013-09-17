@@ -1,0 +1,3 @@
+#Execute linux
+sudo chmod +x unlp_script_security.sh
+sudo ./unlp_script_security.sh
