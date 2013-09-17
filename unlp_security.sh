@@ -91,6 +91,11 @@ fingerprinting(){
 	message "$(grep windows scan_2.out || grep linux scan_2.out || grep Mac scan_2.out 2>/dev/null)" ${RED}
 	message "$(grep open scan_2.out 2>/dev/null)" ${RED}
 	message_date ">> Scanning complete." ${GREEN}
+	
+	message_date ">> Start scanning interface" ${GREEN}
+	message "$(sudo nmap -iflist $ip)" ${RED}
+	message_date ">> Scanning complete." ${GREEN}
+	
 
 	echo "Press any key to finish..."
 	read p
